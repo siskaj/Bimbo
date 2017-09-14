@@ -12,16 +12,16 @@ import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from subprocess import check_output
 from sklearn.metrics import make_scorer, mean_squared_error
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import xgboost as xgb
-from sklearn import cross_validation
+from sklearn import model_selection
 import scipy.stats as stats
 import gc
 
 
-train = pd.read_csv('../input/train.csv') 
-test = pd.read_csv('../input/test.csv')
+train = pd.read_csv('~/data/bimbo/train.csv')
+test = pd.read_csv('~/data/bimbo/test.csv')
 
 print('Train and Test Read')
 
@@ -30,6 +30,8 @@ train.drop(['Demanda_uni_equil'],axis=1, inplace = True)
 
 train['tst'] = 0
 test['tst'] = 1
+print(train.info(memory_usage=True))
+print(test.info(memory_usage=True))
 
 data = pd.concat([train,test], axis=0, copy=True)
 
@@ -37,6 +39,7 @@ print('Train and Test Concat')
 del train
 del test
 gc.collect()
+print(data.info(memory_usage=True))
 
 for i in range(1,6):
     lag = 'Lag' + str(i)
@@ -44,7 +47,7 @@ for i in range(1,6):
     
     data1 = data[['Semana','Cliente_ID','Producto_ID','target']]
     data1.loc[:,'Semana'] = data1['Semana'] +i
-    data1 = pd.groupby(data1,['Semana','Cliente_ID','Producto_ID']).mean() 
+    data1 = data1.groupby(['Semana','Cliente_ID','Producto_ID']).mean()
     data1 = data1.reset_index()
     data1.rename(columns={'target': lag}, inplace=True)
     data = pd.merge(data,data1,
