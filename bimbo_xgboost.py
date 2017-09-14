@@ -19,9 +19,12 @@ from sklearn import model_selection
 import scipy.stats as stats
 import gc
 
+types = {'Semana':np.uint8, 'Agencia_ID':np.uint16, 'Canal_ID':np.uint8,
+         'Ruta_SAK':np.uint16, 'Cliente_ID':np.uint32, 'Producto_ID':np.uint16,
+         'Demanda_uni_equil':np.uint32}
 
-train = pd.read_csv('~/data/bimbo/train.csv')
-test = pd.read_csv('~/data/bimbo/test.csv')
+train = pd.read_csv('~/data/bimbo/train.csv', usecols=types.keys(), dtype=types)
+test = pd.read_csv('~/data/bimbo/test.csv', usecols=types.keys(), dtype=types)
 
 print('Train and Test Read')
 
@@ -63,10 +66,10 @@ data['TotalLags'] = data['Lag1'] + data['Lag2']+ data['Lag3']+ data['Lag4']+ dat
     
 data=data[data['Semana']>8]  # NOW I WORK WITH WEEKS 9,10,11
 
-nAgencia = pd.DataFrame(pd.groupby(data,['Agencia_ID','Semana'])['target'].count())
+nAgencia = pd.DataFrame(data.groupby(['Agencia_ID','Semana'])['target'].count())
 nAgencia = nAgencia.reset_index()
 nAgencia.rename(columns={'target': 'nAgencia'}, inplace=True)
-nAgencia = pd.DataFrame(pd.groupby(nAgencia,['Agencia_ID'])['nAgencia'].mean())
+nAgencia = pd.DataFrame(nAgencia.groupby(['Agencia_ID'])['nAgencia'].mean())
 nAgencia = nAgencia.reset_index()
  
 
@@ -82,10 +85,10 @@ gc.collect()
 print('merge completo nAgencia')
 print(data.shape[0])
 
-nRuta_SAK = pd.DataFrame(pd.groupby(data,['Ruta_SAK','Semana'])['target'].count())
+nRuta_SAK = pd.DataFrame(data.groupby(['Ruta_SAK','Semana'])['target'].count())
 nRuta_SAK = nRuta_SAK.reset_index()
 nRuta_SAK.rename(columns={'target': 'nRuta_SAK'}, inplace=True)
-nRuta_SAK = pd.DataFrame(pd.groupby(nRuta_SAK,['Ruta_SAK'])['nRuta_SAK'].mean())
+nRuta_SAK = pd.DataFrame(nRuta_SAK.groupby(['Ruta_SAK'])['nRuta_SAK'].mean())
 nRuta_SAK = nRuta_SAK.reset_index()
  
 
@@ -101,10 +104,10 @@ gc.collect()
 print('merge completo nRuta_SAK')
 print(data.shape[0])
 
-nCliente_ID = pd.DataFrame(pd.groupby(data,['Cliente_ID','Semana'])['target'].count())
+nCliente_ID = pd.DataFrame(data.groupby(['Cliente_ID','Semana'])['target'].count())
 nCliente_ID = nCliente_ID.reset_index()
 nCliente_ID.rename(columns={'target': 'nCliente_ID'}, inplace=True)
-nCliente_ID = pd.DataFrame(pd.groupby(nCliente_ID,['Cliente_ID'])['nCliente_ID'].mean())
+nCliente_ID = pd.DataFrame(nCliente_ID.groupby(['Cliente_ID'])['nCliente_ID'].mean())
 nCliente_ID = nCliente_ID.reset_index()
  
 
@@ -120,10 +123,10 @@ gc.collect()
 print('merge completo nCliente_ID')
 print(data.shape[0])
 
-nProducto_ID = pd.DataFrame(pd.groupby(data,['Producto_ID','Semana'])['target'].count())
+nProducto_ID = pd.DataFrame(data.groupby(['Producto_ID','Semana'])['target'].count())
 nProducto_ID = nProducto_ID.reset_index()
 nProducto_ID.rename(columns={'target': 'nProducto_ID'}, inplace=True)
-nProducto_ID = pd.DataFrame(pd.groupby(nProducto_ID,['Producto_ID'])['nProducto_ID'].mean())
+nProducto_ID = pd.DataFrame(nProducto_ID.groupby(['Producto_ID'])['nProducto_ID'].mean())
 nProducto_ID = nProducto_ID.reset_index()
  
 
