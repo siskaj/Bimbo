@@ -19,12 +19,11 @@ from sklearn import model_selection
 import scipy.stats as stats
 import gc
 
-types = {'Semana':np.uint8, 'Agencia_ID':np.uint16, 'Canal_ID':np.uint8,
-         'Ruta_SAK':np.uint16, 'Cliente_ID':np.uint32, 'Producto_ID':np.uint16,
-         'Demanda_uni_equil':np.uint32}
 
-train = pd.read_csv('~/data/bimbo/train.csv', usecols=types.keys(), dtype=types)
-test = pd.read_csv('~/data/bimbo/test.csv', usecols=types.keys(), dtype=types)
+train = pd.read_csv('~/data/bimbo/train.csv')
+train = train.sample(n=20000)
+test = pd.read_csv('~/data/bimbo/test.csv')
+test = test.sample(n=2000)
 
 print('Train and Test Read')
 
@@ -148,7 +147,7 @@ train = data[data['tst']==0]
 predict = data[data['tst']==1]
 
 train['target'] = np.log(train['target'] + 1)
-#train2 = train.sample(n=1000000)   <-- another possible reduction of data for fast testing
+#train2 = train.sample(n=1000000)   #<-- another possible reduction of data for fast testing
 train2 = train
 y = train['target']
 X = train[[  'Agencia_ID','Canal_ID','Cliente_ID','Producto_ID','Ruta_SAK',
@@ -204,7 +203,7 @@ res=np.exp(pred)-1
 print('Create lagged values of target variable which will be used as a feature for the 11th week prediction')
 data_test_lag1=data_test1[['Cliente_ID','Producto_ID']]
 data_test_lag1['targetl1']=res
-data_test_lag1 = pd.groupby(data_test_lag1,['Cliente_ID','Producto_ID']).mean() 
+data_test_lag1 = data_test_lag1.groupby(['Cliente_ID','Producto_ID']).mean()
 data_test_lag1 = data_test_lag1.reset_index()
 data_test_lag1.rename(columns={'targetl1': 'Lag1'}, inplace=True)
 
