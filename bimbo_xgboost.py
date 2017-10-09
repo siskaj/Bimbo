@@ -20,10 +20,10 @@ import scipy.stats as stats
 import gc
 
 
-train = pd.read_csv('~/data/bimbo/train.csv')
-train = train.sample(n=20000)
-test = pd.read_csv('~/data/bimbo/test.csv')
-test = test.sample(n=2000)
+train = pd.read_csv('~/data/bimbo/train.csv', nrows=20)
+#train = train.sample(n=20000)
+test = pd.read_csv('~/data/bimbo/test.csv', nrows=6)
+#test = test.sample(n=2000)
 
 print('Train and Test Read')
 
